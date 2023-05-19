@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  next-app:
+    container_name: next-app
+    build:
+      context: ../
+      dockerfile: docker/prod.Dockerfile
+      args:
+        NEXT_PUBLIC_RUN_MODE: ${NEXT_PUBLIC_RUN_MODE}
+        NEXT_PUBLIC_BACE_URL: ${NEXT_PUBLIC_BACE_URL}
+        NEXT_PUBLIC_KAKAO_REDIRECT_URL: ${NEXT_PUBLIC_KAKAO_REDIRECT_URL}
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - my_network
+
+# 아래에 더 많은 컨테이너 추가(nginx, postgres 등)
+
+# 컨테이너가 통신할 수 있도록 네트워크 정의
+# 컨테이너 이름을 호스트 이름으로 사용하여 서로
+networks:
+  my_network:
+    external: true
