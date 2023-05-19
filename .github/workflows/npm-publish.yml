@@ -30,23 +30,23 @@ jobs:
           tags: ${{ secrets.NCP_CONTAINER_REGISTRY }}/nextjs-docker:latest
           secrets: |
             GIT_AUTH_TOKEN=${{ secrets.GIT_TOKEN }}
-  pull_from_registry:
-    name: Connect server ssh and pull from container registry
-    needs: push_to_registry
-    runs-on: ubuntu-latest
-    steps:
-      - name: connect ssh
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.NCP_SERVER_IP }}
-          username: ${{ secrets.NCP_SERVER_USERNAME }}
-          password: ${{ secrets.NCP_SERVER_PASSWORD }}
-          port: ${{ secrets.NCP_SERVER_PORT }}
-          script: |
-            docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/nextjs-docker:latest
-            docker stop $(docker ps -a -q)
-            docker rm $(docker ps -a -q)
-            docker run -d -p 80:3000 --name nextjs-docker ${{ secrets.NCP_CONTAINER_REGISTRY }}/nextjs-docker:latest
-            docker image prune -f
-            docker login -u ${{ secrets.NCP_ACCESS_KEY_ID }} -p ${{ secrets.NCP_SECRET_ACCESS_KEY }} ${{ secrets.NCP_CONTAINER_REGISTRY }}
+#   pull_from_registry:
+#     name: Connect server ssh and pull from container registry
+#     needs: push_to_registry
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: connect ssh
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.NCP_SERVER_IP }}
+#           username: ${{ secrets.NCP_SERVER_USERNAME }}
+#           password: ${{ secrets.NCP_SERVER_PASSWORD }}
+#           port: ${{ secrets.NCP_SERVER_PORT }}
+#           script: |
+#             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/nextjs-docker:latest
+#             docker stop $(docker ps -a -q)
+#             docker rm $(docker ps -a -q)
+#             docker run -d -p 80:3000 --name nextjs-docker ${{ secrets.NCP_CONTAINER_REGISTRY }}/nextjs-docker:latest
+#             docker image prune -f
+#             docker login -u ${{ secrets.NCP_ACCESS_KEY_ID }} -p ${{ secrets.NCP_SECRET_ACCESS_KEY }} ${{ secrets.NCP_CONTAINER_REGISTRY }}
 
