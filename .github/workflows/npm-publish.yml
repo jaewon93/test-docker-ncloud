@@ -46,7 +46,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: 175.45.205.218
-          username: cuQAyHZFCc9MYauWxNy9
+          username: s188338c868f
           password: A8yDY3cEf96eEe
           port: 22
           script: |
