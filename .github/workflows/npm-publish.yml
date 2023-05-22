@@ -57,4 +57,3 @@ jobs:
             docker run -d -p 80:3000 --name nextjs-docker test-check-u-registry.kr.ncr.ntruss.com/nextjs-docker:latest
             docker image prune -f
             
-          
