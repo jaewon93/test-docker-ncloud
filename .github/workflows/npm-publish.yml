@@ -47,7 +47,7 @@ jobs:
         with:
           host: 175.45.205.218
           username: root
-          password: A8yDY3cEf96eEe
+          password: D6=5Y3JPHf
           port: 22
           script: |
             docker login -u ${{ secrets.NCP_ACCESS_KEY_ID }} -p ${{ secrets.NCP_SECRET_ACCESS_KEY }} ${{ secrets.NCP_CONTAINER_REGISTRY }}
