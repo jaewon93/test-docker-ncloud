@@ -45,19 +45,14 @@ jobs:
       - name: connect ssh
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.NCP_SERVER_IP }}
-          username: ${{ secrets.NCP_SERVER_USERNAME }}
-          password: ${{ secrets.NCP_SERVER_PASSWORD }}
-          port: ${{ secrets.NCP_SERVER_PORT }}
+          host: 175.45.205.218
+          username: cuQAyHZFCc9MYauWxNy9
+          password: 3t9XiugniEp5FhJH9liKnzu41QGVbUxroIXXs2db
+          port: 22
           script: |
-            # NCP 컨테이너 레지스트리에서 최신 Docker 이미지를 가져옵니다.
-            docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/nextjs-docker:latest
-            # 실행 중인 모든 컨테이너를 중지합니다.
+            docker pull test-check-u-registry.kr.ncr.ntruss.com/nextjs-docker:latest
             docker stop $(docker ps -a -q)
-            # 모든 컨테이너를 제거합니다.
             docker rm $(docker ps -a -q)
-            # 새로운 컨테이너를 실행합니다.
-            docker run -d -p 80:3000 --name nextjs-docker ${{ secrets.NCP_CONTAINER_REGISTRY }}/nextjs-docker:latest
-            # 사용하지 않는 이미지를 정리합니다.
+            docker run -d -p 80:3000 --name nextjs-docker test-check-u-registry.kr.ncr.ntruss.com/nextjs-docker:latest
             docker image prune -f
           
