@@ -7,6 +7,7 @@ on:
     branches: ['main']
     
 jobs:
+  # 로컬 머신에서 빌드된 Docker 이미지를 NCP 컨테이너 레지스트리로 푸시(push)하는 역할 
   push_to_registry:
     name: Push to ncp container registry
     runs-on: ubuntu-latest
@@ -15,12 +16,14 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
+#         NCP 컨테이너 레지스트리에 로그인합니다. docker/login-action@v2 액션을 사용하여 Docker 레지스트리에 대한 인증 정보를 제공합니다.
       - name: Login to NCP Container Registry
         uses: docker/login-action@v2
         with:
           registry: ${{ secrets.NCP_CONTAINER_REGISTRY }}
           username: ${{ secrets.NCP_ACCESS_KEY_ID }}
           password: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
+#         Docker 이미지를 빌드하고, 태그를 지정하여 NCP 컨테이너 레지스트리로 푸시(push)합니다. docker/build-push-action@v3 액션을 사용하여 빌드 및 푸시 작업을 수행합니다.
       - name: build and push
         uses: docker/build-push-action@v3
         with:
@@ -30,13 +33,16 @@ jobs:
           tags: ${{ secrets.NCP_CONTAINER_REGISTRY }}/nextjs-docker:latest
           secrets: |
             GIT_AUTH_TOKEN=${{ secrets.GIT_TOKEN }}
+            
+  # 타겟 서버와 연동하기
+  # NCP 컨테이너 레지스트리에서 이미지를 가져와서 원격 서버에서 실행하는 역할
   pull_from_registry:
     name: Connect server ssh and pull from container registry
     needs: push_to_registry
     runs-on: ubuntu-latest
     steps:
+      # SSH를 사용하여 원격 서버에 연결합니다. appleboy/ssh-action@master 액션을 사용하여 SSH 연결을 설정합니다.
       - name: connect ssh
-#         uses: appleboy/ssh-action@v0.4.0
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.NCP_SERVER_IP }}
@@ -44,10 +50,14 @@ jobs:
           password: ${{ secrets.NCP_SERVER_PASSWORD }}
           port: ${{ secrets.NCP_SERVER_PORT }}
           script: |
+            # NCP 컨테이너 레지스트리에서 최신 Docker 이미지를 가져옵니다.
             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/nextjs-docker:latest
+            # 실행 중인 모든 컨테이너를 중지합니다.
             docker stop $(docker ps -a -q)
+            # 모든 컨테이너를 제거합니다.
             docker rm $(docker ps -a -q)
+            # 새로운 컨테이너를 실행합니다.
             docker run -d -p 80:3000 --name nextjs-docker ${{ secrets.NCP_CONTAINER_REGISTRY }}/nextjs-docker:latest
+            # 사용하지 않는 이미지를 정리합니다.
             docker image prune -f
-            docker login -u cuQAyHZFCc9MYauWxNy9 -p A8yDY3cEf96eEe test-check-u-registry.kr.ncr.ntruss.com
-
+          
