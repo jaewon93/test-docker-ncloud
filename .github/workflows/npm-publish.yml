@@ -47,7 +47,7 @@ jobs:
         with:
           host: 175.45.205.218
           username: cuQAyHZFCc9MYauWxNy9
-          password: 3t9XiugniEp5FhJH9liKnzu41QGVbUxroIXXs2db
+          password: A8yDY3cEf96eEe
           port: 22
           script: |
             docker pull test-check-u-registry.kr.ncr.ntruss.com/nextjs-docker:latest
